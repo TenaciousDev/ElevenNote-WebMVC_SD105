@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace ElevenNote.Services
 {
@@ -128,5 +129,21 @@ namespace ElevenNote.Services
                 return ctx.SaveChanges() == 1;
             }
         }
+
+        // WebMVC Helper Methods
+
+        // Returns a collecton of SelectListItem for use in a View
+        public List<SelectListItem> GetCategoryOptions()
+        {
+            using (var ctx = ApplicationDbContext.Create())
+            {
+                return ctx.Categories.ToList().Select(c => new SelectListItem
+                {
+                    Value = c.CategoryId.ToString(),
+                    Text = c.Name
+                }).ToList();
+            }
+        }
+
     }
 }

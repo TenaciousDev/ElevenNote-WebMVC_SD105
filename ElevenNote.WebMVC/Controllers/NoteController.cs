@@ -48,19 +48,5 @@ namespace ElevenNote.WebMVC.Controllers
             var userId = Guid.Parse(User.Identity.GetUserId());
             return new NoteService(userId);
         }
-
-        // Gets a List<SelectListItem> containing Category information
-        private List<SelectListItem> GetCategoryOptions()
-        {
-            var svc = CreateNoteService();
-            using (var ctx = svc.GetContext())
-            {
-                return ctx.Categories.ToList().Select(c => new SelectListItem
-                {
-                    Value = c.CategoryId.ToString(),
-                    Text = c.Name
-                }).ToList();
-            }
-        }
     }
 }
