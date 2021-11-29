@@ -16,18 +16,21 @@ namespace ElevenNote.WebMVC.Controllers
         // GET: Notes
         public ActionResult Index()
         {
-            return View(new NoteListItem[0]);
-        }
-
-        // GET: Notes/Create
-        public ActionResult Create()
-        {
             var svc = CreateNoteService();
             var model = svc.GetNotes();
+            TempData["Categories"] = svc.GetCategoryOptions();
             return View(model);
         }
 
-        // POST: Notes/Create
+        // GET: Notes (by category)
+
+        // GET: Note/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Note/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(NoteCreate model)
@@ -35,12 +38,41 @@ namespace ElevenNote.WebMVC.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            CreateNoteService().CreateNote(model);
+            var svc = CreateNoteService();
+
+            if (!svc.CreateNote(model))
+            {
+                ModelState.AddModelError("", "Note could not be created.");
+                return View(model);
+            }
 
             return RedirectToAction("Index");
         }
 
-        // Helper Methods
+        // GET: Note/Delete
+        // POST: Note/Delete
+
+        // GET: Note/Update
+        // POST: Note/Update
+
+        // GET: Note/Details (by id)
+        public ActionResult Details(int? id)
+        {
+            if (id is null)
+                return RedirectToAction("Index");
+            var model = CreateNoteService().GetNoteById((int)id);
+            return View(model);
+        }
+        // GET: Note/Details (by title)
+        public ActionResult Details(string title)
+        {
+            if (title is null)
+                return RedirectToAction("Index");
+            var model = CreateNoteService().GetNoteByTitle(title);
+            return View(model);
+        }
+
+        // <--- HELPER METHODS --->
 
         // Creates a user-authenticated instance of NoteService
         private NoteService CreateNoteService()
